@@ -1,0 +1,43 @@
+$primary-color: #2d3c3c !default;
+$primary-color-light: lighten(#2d3c3c, 15%) !default;
+$primary-color-dark: darken(#2d3c3c, 10%) !default;
+
+$secondary-color: #fff7db !default;
+$secondary-color-light: lighten(#fff7db, 10%) !default;
+$secondary-color-dark: darken(#fff7db, 15%) !default;
+
+$tertiary-color: #03a9f4 !default;
+$tertiary-color-light: #67daff !default;
+$tertiary-color-dark: #007ac1 !default;
+
+$accent-color: #f4c245 !default;
+$accent-color-light: lighten(#f4c245, 10%) !default;
+$accent-color-dark: darken(#f4c245, 15%) !default;
+
+$text-color-dark: rgba(darken($primary-color-dark, 5%), 0.95) !default;
+$text-color-light: rgba(lighten($secondary-color-light, 5%), 0.95) !default;
+
+$icon-color-dark-active: rgba($text-color-dark, 0.7) !default;
+$icon-color-dark-disabled: rgba($text-color-dark, 0.46) !default;
+
+$ripple-color: $text-color-dark !default;
+
+$shadow-color: $text-color-dark !default;
+$shadow-color-light: $text-color-light !default;
+$border-color: #cfd8dc !default;
+
+$shade-color-dark: rgba($text-color-dark, 0.12);
+
+$text-color-subheader: rgba($text-color-dark, 0.54);
+
+.primary {
+  background-color: $primary-color;
+}
+
+.secondary {
+  background-color: $secondary-color;
+}
+
+.accent {
+  accent-color: $accent-color;
+}

@@ -1,0 +1,15 @@
+node_modules
+certs
+deploy
+public
+!public/index
+.idea
+.DS_Store
+static/images/homeSlidesBkup
+blockchain/build
+
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

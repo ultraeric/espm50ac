@@ -1,0 +1,22 @@
+.marketplace-page.info-page {
+  padding-left: 15vw;
+  padding-right: 15vw;
+  .title-area {
+    padding-top: 3vh;
+    padding-bottom: 0vh;
+    padding-left: 5vw;
+    padding-right: 5vw;
+    min-height: 0vh;
+    > h4 {
+      margin: 0;
+    }
+  }
+  .info-area {
+    padding-left: 5vw;
+    padding-right: 5vw;
+    p.centered.title {
+      margin-top: 3.5vh;
+      margin-bottom: 2.5vh;
+    }
+  }
+}

@@ -1,0 +1,60 @@
+.backdrop-container {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: -10000;
+  // height: 100%;
+  // max-height: 100%;
+  > img {
+    opacity: 0.1;
+    top: 0vh;
+    width: 100%;
+    height: auto;
+    position: absolute;
+  }
+}
+.backdrop-area {
+  height: 120vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: visible;
+  img {
+    position: absolute;
+  }
+  img.drop {
+    max-width: 22.5vw;
+  }
+  img.right-drop {
+    right: -3vw;
+  }
+  img.left-drop {
+    left: -3vw;
+  }
+  @media #{$mobile-query} {
+    img.drop {
+      max-width: 32.5vw;
+    }
+    img.right-drop {
+      right: -15vw;
+    }
+    img.left-drop {
+      left: -15vw;
+    }
+  }
+  @media #{$tablet-query} {
+    img.drop {
+      max-width: 27.5vw;
+    }
+    img.right-drop {
+      right: -10vw;
+    }
+    img.left-drop {
+      left: -10vw;
+    }
+  }
+}

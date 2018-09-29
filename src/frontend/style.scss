@@ -1,0 +1,35 @@
+// @import url('https://fonts.googleapis.com/css?family=Lato');
+@import url('https://fonts.googleapis.com/css?family=Lato|Montserrat');
+
+@import '~static/styles/style.scss';
+@import './Pages/style.scss';
+@import './Footer/style.scss';
+@import './Header/style.scss';
+
+.app-root {
+  // font-family: 'Lato', sans-serif;
+  font-family: 'Montserrat', sans-serif;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  opacity: 1;
+}
+
+input {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.content-container {
+  margin-bottom: 50px;
+}
+
+.content {
+  overflow: hidden;
+}
+
+.overlay.ripple-container{
+  height: 100% !important;
+}
+
+.overlay-container.fade-children{
+  height: 100% !important;
+}

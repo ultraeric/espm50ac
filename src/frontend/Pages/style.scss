@@ -1,0 +1,93 @@
+@import './_Backdrop/style.scss';
+@import './Login/style.scss';
+@import './Profile/style.scss';
+@import './Marketplace/style.scss';
+@import './Purchases/style.scss';
+
+
+.page {
+  min-height: 50vh;
+  width: 100%;
+  box-sizing: border-box;
+  h3.page-title {
+    margin-top: 10vh;
+  }
+  > * {
+    min-height: 50vh;
+    @media #{$tablet-query} {
+      padding-left: calc(30% - 144px);
+      padding-right: calc(30% - 144px);
+    }
+
+    @media #{$desktop-query} {
+      padding-left: calc(45% - 291px);
+      padding-right: calc(45% - 291px);
+    }
+  }
+  .overlay-container {
+    width: calc(100vw - (100vw - 100%));
+    .overlay-children {
+      width: calc(100vw - (100vw - 100%));
+    }
+  }
+  .button {
+    border: 1px solid rgba($text-color-dark, 0.25);
+    font-size: 20px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 30px;
+    margin-right: 30px;
+    transition: all $standard-time $standard-transition-curve;
+  }
+  .button:hover {
+    transition: all $standard-time $standard-transition-curve;
+    border: 1px solid rgba($text-color-dark, 0.75);
+  }
+}
+
+// For any informational pages
+.info-page {
+  min-height: 100vh;
+  > img {
+    position: absolute;
+    right: 0;
+  }
+
+  .title-area {
+    min-height: 100vh;
+    padding-top: 25vh;
+    position: relative;
+    padding-bottom: 20vh;
+    max-height: 100%;
+    box-sizing: border-box;
+    .button-container {
+      margin-top: 5vh;
+    }
+    .button:hover {
+      transition: all $standard-time $standard-transition-curve;
+      border: 1px solid rgba($text-color-dark, 0.75);
+    }
+  }
+
+  .info-area {
+    .section-header {
+      margin-top: 7.5vh;
+    }
+    .title-small {
+      font-size: 1.1em;
+    }
+    .subheader-small {
+      color: $text-color-subheader;
+      margin-top: -12px;
+      font-size: 0.9em;
+      line-height: 1.1em;
+    }
+    hr.title-break {
+      margin-top: 20px;
+      width: 80%;
+      margin-left: 10%;
+      margin-right: 10%;
+      margin-bottom: 20px;
+    }
+  }
+}

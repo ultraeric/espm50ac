@@ -1,0 +1,29 @@
+import io from 'socket.io-client';
+import User from './User';
+import Claims from './Claims';
+import Flights from './Flights';
+import Purchases from './Purchases';
+import {Guac} from 'guac-hoc/lib/Guac';
+
+class Backend {
+  constructor(ioUrl = 'http://192.168.1.118:8081/') {
+    this.bindAllMethods();
+    this.socket = io(ioUrl);
+    this.user = new User(this.socket);
+    this.claims = new Claims(this.socket);
+    this.flights = new Flights(this.socket);
+    this.purchases = new Purchases(this.socket);
+  }
+
+  on(eventName, callback) {
+    this.socket.on(eventName, callback);
+  }
+  removeListener(eventName, callback) {
+    this.socket.removeListener(eventName, callback);
+  }
+}
+Backend = Guac(Backend);
+const backend = new Backend();
+
+export default Backend;
+export {Backend, backend};
