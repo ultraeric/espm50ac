@@ -10,13 +10,13 @@ class Nav {
   }
 }
 
-let marketplaceNavs = [
-  new Nav('Purchases', paths.purchases)
+let registrationNavs = [
+  new Nav('Tracking', paths.tracking)
 ];
 
 let mainNavs = [
   new Nav('Login', '/login'),
-  new Nav('Marketplace', paths.marketplace, [], marketplaceNavs),
+  new Nav('Registration', paths.registration, [], registrationNavs),
   new Nav('Profile', paths.profile),
 ];
 

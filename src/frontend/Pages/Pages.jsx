@@ -5,8 +5,8 @@ import {Route, Switch} from 'react-router-dom';
 
 import {Login} from './Login';
 import {Profile} from './Profile';
-import {Marketplace} from "frontend/Pages/Marketplace";
-import {Purchases} from "frontend/Pages/Purchases";
+import {Registration} from "frontend/Pages/Registration";
+import {Tracking} from "frontend/Pages/Tracking";
 
 import {backend} from 'frontend/backendConnector/Backend';
 import {globalState} from 'static/data/globalState';
@@ -19,21 +19,19 @@ class Pages extends React.Component {
 
   componentWillMount() {
     backend.on('/response/claims/getAll', this.populateClaims);
-    backend.on('/response/purchases/getAll', this.populatePurchases);
-    backend.on('/response/tokens/reward/get', this.populateRewardTokens);
-    backend.on('/response/tokens/regular/get', this.populateRegularTokens);
+    backend.on('/response/tracking/getAll', this.populateTracking);
+    backend.on('/response/tokens/get', this.populateRegularTokens);
   }
 
   componentWillUnmount() {
     backend.removeListener('/response/claims/getAll', this.populateClaims);
-    backend.removeListener('/response/purchases/getAll', this.populatePurchases);
-    backend.removeListener('/response/tokens/reward/get', this.populateRewardTokens);
-    backend.removeListener('/response/tokens/regular/get', this.populateRegularTokens);
+    backend.removeListener('/response/tracking/getAll', this.populateTracking);
+    backend.removeListener('/response/tokens/get', this.populateRegularTokens);
   }
 
   populateClaims(claims) { globalState.claims = claims; setTimeout(() => this.forceUpdate(), 500); }
 
-  populatePurchases(purchases) { globalState.purchases = purchases; setTimeout(() => this.forceUpdate(), 500); console.log(purchases);}
+  populateTracking(tracking) { globalState.tracking = tracking; setTimeout(() => this.forceUpdate(), 500); console.log(tracking);}
 
   populateRewardTokens(numTokens) {
     if (globalState.me) {
@@ -44,7 +42,7 @@ class Pages extends React.Component {
 
   populateRegularTokens(numTokens) {
     if (globalState.me) {
-      globalState.me.tokens = numTokens;
+      globalState.me.numTokens = numTokens;
     }
     setTimeout(() => this.forceUpdate(), 500);
   }
@@ -55,8 +53,8 @@ class Pages extends React.Component {
         <Route path='*' render={() => {window.scrollTo(0, 0); return null;}}/>
         <Switch>
           <Route exact path='/login' component={Login}/>
-          <Route exact path='/marketplace/purchases' component={Purchases}/>
-          <Route exact path='/marketplace' component={Marketplace}/>
+          <Route exact path='/registration/tracking' component={Tracking}/>
+          <Route exact path='/registration' component={Registration}/>
           <Route path='/profile' component={Profile}/>
           <Route path='/' component={Login}/>
         </Switch>

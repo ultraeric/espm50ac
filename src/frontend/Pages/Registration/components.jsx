@@ -45,7 +45,7 @@ class PurchaseOverlay extends React.Component {
   constructor() {
     super();
     this.state = {
-      quantity: 0
+      comment: ''
     };
     this.bindAllMethods();
   }
@@ -53,23 +53,23 @@ class PurchaseOverlay extends React.Component {
   onKeyPress(event) {
     if (event.key === 'Enter') {
       event.stopPropagation();
-      this.props.purchaseProduct(this.props.product, this.state.quantity);
+      this.props.purchaseProduct(this.props.product, this.state.comment);
     }
   }
 
   onButtonClick() {
-    this.props.purchaseProduct(this.props.product, this.state.quantity);
-    this.setState({quantity: 0});
+    this.props.purchaseProduct(this.props.product, this.state.comment);
+    this.setState({comment: ''});
     this.props.deactivate();
   }
 
   onOverlayClick() {
-    this.setState({quantity: 0});
+    this.setState({comment: ''});
     this.props.deactivate();
   }
 
-  onQuantityChange(val) {
-    if (!isNaN(val)) this.setState({quantity: val});
+  onCommentChange(val) {
+    this.setState({comment: val});
   }
 
   render() {
@@ -84,19 +84,20 @@ class PurchaseOverlay extends React.Component {
             <Col xs={12} md={10} lg={8}>
               <Card style={{backgroundColor: 'white', pointerEvents: this.props.active ? 'all':'none'}}>
                 <CardTextArea>
-                  <div className={'header'}>Purchase Product</div>
+                  <div className={'header'}>Register Product</div>
                   <div className={'subheader'}>Name:{' ' + this.props.product.name}</div>
+                  <div classname={'subheader'}>Price:{' ' + this.props.product.price}</div>
                   <div>{' ' + this.props.product.description} </div>
-                  <Input label={'Quantity'}
-                         value={this.state.quantity}
-                         changeValue={this.onQuantityChange}/>
+                  <Input label={'Comment'}
+                         value={this.state.comment}
+                         changeValue={this.onCommentChange}/>
                   <Row style={{display: 'flex'}}>
                     <Col xs={0} sm={1} md={2} lg={3}/>
                     <Col xs={12} sm={10} md={8} lg={6}>
                       <Button style={{backgroundColor: '#fdf3d9'}}
-                              disabled={isNaN(this.state.quantity)}
+                              disabled={!this.state.comment}
                               onClick={this.onButtonClick}>
-                              {'Purchase Item'}</Button>
+                              {'Register Item'}</Button>
                     </Col>
                     <Col xs={0} sm={1} md={2} lg={3}/>
                   </Row>

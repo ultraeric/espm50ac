@@ -1,8 +1,8 @@
 let paths = {
   login: '/',
-  marketplace: '/marketplace',
+  registration: '/registration',
   profile: '/profile',
-  purchases: '/marketplace/purchases'
+  tracking: '/registration/tracking'
 };
 
 export default paths;

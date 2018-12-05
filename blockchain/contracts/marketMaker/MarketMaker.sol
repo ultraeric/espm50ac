@@ -1,27 +1,28 @@
 pragma solidity ^0.4.24;
 
-import "../tokens/SIA20.sol";
+import "../tokens/ESPM20.sol";
 
-contract SIAEscrow {
+contract ESPMEscrow {
 
   address owner;
 
   uint256 weiPerCent;
   uint256 totalWei;
 
-  SIA20 sia20;
+  ESPM20 espm20;
 
   /* Makes sure only the contract owner can call a function with this modifier. */
   modifier onlyOwner() {
     require(msg.sender == owner, "Non-owner cannot call this function.");
+    _;
   }
 
   /* Constructor that sets the owner to the contract deployer and deploys a
-   * Sia20 contract.
+   * Espm20 contract.
    */
   constructor() public {
     owner = msg.sender;
-    sia = new SIA20();
+    espm20 = new ESPM20();
   }
 
   /*
@@ -32,24 +33,24 @@ contract SIAEscrow {
    */
   function mint(address to, uint256 amount) public onlyOwner {
     require(to != owner);
-    sia20.mint(to, amount);
+    espm20.mint(to, amount);
   }
 
-  /* Buy SIA20 tokens in exchange for Ether. */
+  /* Buy ESPM20 tokens in exchange for Ether. */
   function buyTokens() public payable {
     uint256 amount = msg.value / weiPerCent;
-    sia20.mint(msg.sender, amount);
+    espm20.mint(msg.sender, amount);
     totalWei += msg.value;
   }
 
-  /* Sell SIA20 tokens in exchange for Ether. */
+  /* Sell ESPM20 tokens in exchange for Ether. */
   function sellTokens() public {
 
-    uint256 amount = sia20.allowance(msg.sender, address(this));
+    uint256 amount = espm20.allowance(msg.sender, address(this));
     require(amount > 0, "Nothing to burn");
 
     uint256 amountToTransfer = amount * weiPerCent;
-    sia20.burnFrom(msg.sender, amount);
+    espm20.burnFrom(msg.sender, amount);
     msg.sender.transfer(amountToTransfer);
 
     totalWei -= amountToTransfer;
@@ -65,23 +66,23 @@ contract SIAEscrow {
   }
 
   /*
-   * Allows the owner to remove funds that were used to back the SIA20 tokens.
+   * Allows the owner to remove funds that were used to back the ESPM20 tokens.
    * The owner cannot remove more than it put in.
    *
    * @param _weiPerCent The exchange rate
    */
   function removeFunds(uint256 amount) public onlyOwner{
-    require(this.balance - amount > totalWei, "Owner cannnot remove more funds than it put in")
+    require(address(this).balance - amount > totalWei, "Owner cannnot remove more funds than it put in");
     owner.transfer(amount);
   }
 
   /*
-   * Returns the address of the SIA20 token contract.
+   * Returns the address of the ESPM20 token contract.
    *
-   * @return The address of the SIA20 token contract
+   * @return The address of the ESPM20 token contract
    */
   function getTokenAddress() public view returns(address){
-    return address(sia20);
+    return address(espm20);
   }
 
   function() public payable { }

@@ -3,26 +3,26 @@ const web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 
 const instanceData = require('./instanceData.json');
 
-const SIA20JSON = JSON.parse(JSON.stringify(require('./abi/SIA20.json')));
-const SIA20RewardJSON = JSON.parse(JSON.stringify(require('./abi/SIA20Reward.json')));
-const SIA721JSON = JSON.parse(JSON.stringify(require('./abi/SIA721.json')));
-const SIAEscrowJSON = JSON.parse(JSON.stringify(require('./abi/SIAEscrow.json')));
+const ESPM20JSON = JSON.parse(JSON.stringify(require('./abi/ESPM20.json')));
+const ESPM20RewardJSON = JSON.parse(JSON.stringify(require('./abi/ESPM20Reward.json')));
+const ESPM721JSON = JSON.parse(JSON.stringify(require('./abi/ESPM721.json')));
+const ESPMEscrowJSON = JSON.parse(JSON.stringify(require('./abi/ESPMEscrow.json')));
 
-let SIA20Contract = new web3.eth.Contract(SIA20JSON.abi, instanceData.SIA20Address);
-let SIA20RewardContract = new web3.eth.Contract(SIA20RewardJSON.abi, instanceData.SIA20RewardAddress);
-let SIA721Contract = new web3.eth.Contract(SIA721JSON.abi, instanceData.SIA721Address);
+let ESPM20Contract = new web3.eth.Contract(ESPM20JSON.abi, instanceData.ESPM20Address);
+let ESPM20RewardContract = new web3.eth.Contract(ESPM20RewardJSON.abi, instanceData.ESPM20RewardAddress);
+let ESPM721Contract = new web3.eth.Contract(ESPM721JSON.abi, instanceData.ESPM721Address);
 
-let SIAEscrowContract = new web3.eth.Contract(SIAEscrowJSON.abi);
+let ESPMEscrowContract = new web3.eth.Contract(ESPMEscrowJSON.abi);
 
 let accounts = instanceData.ganacheAccounts;
 
-let sia = accounts[0];
+let espm = accounts[0];
 
-// console.log(sia);
+// console.log(espm);
 //
-// SIA721Contract.methods.mintWithTokenURI(sia, 1, "data").send({from: sia, gas: 5000000})
+// ESPM721Contract.methods.mintWithTokenURI(espm, 1, "data").send({from: espm, gas: 5000000})
 // .then(function(receipt) {
-//   return SIA721Contract.methods.ownerOf(1).call({from: sia});
+//   return ESPM721Contract.methods.ownerOf(1).call({from: espm});
 // }).then(function(owner) {
 //   console.log(owner);
 // });
@@ -30,14 +30,14 @@ let sia = accounts[0];
 
 module.exports = {
   web3,
-  SIA20JSON,
-  SIA20RewardJSON,
-  SIA721JSON,
-  SIAEscrowJSON,
-  SIA20Contract,
-  SIA20RewardContract,
-  SIA721Contract,
-  SIAEscrowContract,
+  ESPM20JSON,
+  ESPM20RewardJSON,
+  ESPM721JSON,
+  ESPMEscrowJSON,
+  ESPM20Contract,
+  ESPM20RewardContract,
+  ESPM721Contract,
+  ESPMEscrowContract,
   accounts,
-  sia,
+  espm,
 };

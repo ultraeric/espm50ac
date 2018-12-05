@@ -7,19 +7,18 @@ import profileimg from "static/images/misc/profileimg.jpg";
 import {Divider} from 'yui-md/lib/Divider';
 import {Overlay} from 'yui-md/lib/Overlay';
 import {Card, CardTextArea} from 'yui-md/lib/Card';
+import {Input} from "yui-md/lib/Input";
 import QRCode from 'qrcode.react';
 
-function makeProfileCard(name, status, numTokens, numRewardTokens) {
+function makeProfileCard(name, numTokens) {
   return (
     <Row style={{minHeight: '30vh'}}>
       <Col xs={12} sm={4} md={2}>
         <img style={{maxWidth: '100%'}} src={profileimg}/>
       </Col>
       <Col style={{paddingLeft: '20px'}} xs={12} sm={7} md={6}>
-        <h4>{name}</h4>
-        <div className={'title'}>{status}</div>
+        <h4>User ID: {name}</h4>
         <div className={'subheader'}>Tokens: {numTokens}</div>
-        <div className={'subheader'}>Reward Tokens: {numRewardTokens}</div>
       </Col>
       <Col xs={12} md={4}>
         <Button icon={'local_post_office'}/>
@@ -34,16 +33,16 @@ function makeRedemptionCard(flights, flightClaims, activateOverlay) {
 }
 
 /**
- * purchases: list<object>
+ * tracking: list<object>
  * activateOverlay: function(exp)
  * **/
-function makePurchasesCard(purchases, activateOverlay) {
-  let card = [<div className={'header'} id={-1}>Purchases</div>];
+function makeTrackingCard(tracking, activateOverlay) {
+  let card = [<div className={'header'} id={-1}>Tracking</div>];
   function createOnClick(purchase) {
     return () => activateOverlay(purchase);
   }
-  for (let i in purchases) {
-    let purchase = purchases[i];
+  for (let i in tracking) {
+    let purchase = tracking[i];
     let comps = [
       <Divider horizontal margin id={i * 5}/>,
       <div className={'title'} id={i * 5 + 1}>{purchase.name}</div>,
@@ -79,13 +78,17 @@ function makePurchasesCard(purchases, activateOverlay) {
 
 /**
  * active: boolean
- * purchase: object (see SIA docs)
+ * purchase: object (see ESPM docs)
  * deactivate: function
  * confirm: function
+ * update: function
  * **/
-class PurchasesOverlay extends React.Component {
+class TrackingOverlay extends React.Component {
   constructor() {
     super();
+    this.state = {
+      comment: ''
+    };
     this.bindAllMethods();
   }
 
@@ -98,6 +101,21 @@ class PurchasesOverlay extends React.Component {
       </div>);
     }
     return components;
+  }
+
+  onButtonClick() {
+    this.props.update(this.props.purchase, this.state.comment);
+    this.setState({comment: ''});
+    this.props.deactivate();
+  }
+
+  onOverlayClick() {
+    this.setState({comment: ''});
+    this.props.deactivate();
+  }
+
+  onCommentChange(val) {
+    this.setState({comment: val});
   }
 
   render() {
@@ -124,6 +142,19 @@ class PurchasesOverlay extends React.Component {
                   <div onClick={() => this.props.confirm(purchase)}>
                     <QRCode value={JSON.stringify(purchase.tracking[purchase.tracking.length - 1])} renderAs={'svg'}/>
                   </div>
+                  <Input label={'Comment'}
+                         value={this.state.comment}
+                         changeValue={this.onCommentChange}/>
+                  <Row style={{display: 'flex'}}>
+                    <Col xs={0} sm={1} md={2} lg={3}/>
+                    <Col xs={12} sm={10} md={8} lg={6}>
+                      <Button style={{backgroundColor: '#fdf3d9'}}
+                              disabled={!this.state.comment}
+                              onClick={this.onButtonClick}>
+                        {'Add to lifecycle'}</Button>
+                    </Col>
+                    <Col xs={0} sm={1} md={2} lg={3}/>
+                  </Row>
                 </CardTextArea>
               </Card>
             </Col>
@@ -133,14 +164,15 @@ class PurchasesOverlay extends React.Component {
     );
   }
 }
-PurchasesOverlay = Guac(PurchasesOverlay);
+TrackingOverlay = Guac(TrackingOverlay);
 
-function makePurchasesOverlay(active, purchase, deactivate, confirm) {
-  return <PurchasesOverlay active={active}
+function makeTrackingOverlay(active, purchase, deactivate, confirm, update) {
+  return <TrackingOverlay active={active}
                           purchase={purchase}
                           deactivate={deactivate}
-                          confirm={confirm}/>
+                          confirm={confirm}
+                          update={update}/>
 }
 
-export default makePurchasesCard;
-export { makeProfileCard, makePurchasesCard, makePurchasesOverlay, PurchasesOverlay };
+export default makeTrackingCard;
+export { makeProfileCard, makeTrackingCard, makeTrackingOverlay, TrackingOverlay };

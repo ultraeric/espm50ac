@@ -6,8 +6,8 @@ class User {
     this.bindAllMethods();
   }
 
-  login(flyerNumber, password) {
-    this.socket.emit('/request/login', {flyerNumber: flyerNumber, password: password});
+  login(userId, password) {
+    this.socket.emit('/request/login', {auth: {userId: userId, password: password}});
   }
 }
 User = Guac(User);

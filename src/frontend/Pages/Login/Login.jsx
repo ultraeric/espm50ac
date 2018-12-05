@@ -15,7 +15,7 @@ class Login extends React.Component {
   constructor() {
     super();
     this.render = this.render.bind(this);
-    this.state = {flyerNumber: '',
+    this.state = {userId: '',
                   password: '',
                   loginFailed: false};
     this.bindAllMethods();
@@ -39,11 +39,11 @@ class Login extends React.Component {
   }
 
   tryLogin() {
-    backend.user.login(this.state.flyerNumber, this.state.password);
+    backend.user.login(this.state.userId, this.state.password);
   }
 
   editField(fieldName, val) {
-    if (fieldName === 'password' || fieldName === 'flyerNumber') {
+    if (fieldName === 'password' || fieldName === 'userId') {
       this.setState({loginFailed: false});
     }
     let newState = {};
@@ -63,7 +63,7 @@ class Login extends React.Component {
       <div className={'login-page'}>
         <LoginSlideshow/>
         <div className={'title-area'}>
-          <h2 className={'centered'}>Singapore Airlines</h2>
+          <h2 className={'centered'}>Reusable Resources</h2>
           <h4 className={'centered'}>Tokenized Platform</h4>
           <div className={'centered subtitle'}>
               <Button large
@@ -74,9 +74,9 @@ class Login extends React.Component {
         </div>
         <div className={'info-area'} onKeyPress={this.onKeyPress}>
           <h4 className={'centered title'}>Login</h4>
-          <Input label={'Flyer Number'}
-            value={this.state.flyerNumber}
-            changeValue={(val) => this.editField('flyerNumber', val)}/>
+          <Input label={'User ID'}
+            value={this.state.userId}
+            changeValue={(val) => this.editField('userId', val)}/>
           <Input
             className={'password'}
             label={'Password'}

@@ -1,16 +1,16 @@
 let assert = require('chai').assert;
 
-let SIA20 = artifacts.require("SIA20");
-let SIA20Reward = artifacts.require("SIA20Reward");
-let SIA721 = artifacts.require("SIA721");
+let ESPM20 = artifacts.require("ESPM20");
+let ESPM20Reward = artifacts.require("ESPM20Reward");
+let ESPM721 = artifacts.require("ESPM721");
 
 contract('Tokens', async (accounts) => {
-    let sia20;
-    let sia20Reward;
-    let sia721;
+    let espm20;
+    let espm20Reward;
+    let espm721;
     let escrow;
 
-    let sia = accounts[0];
+    let espm = accounts[0];
 
     let tokenId1 = 12345;
     let tokenURI1 = "token metatdata 1";
@@ -20,151 +20,151 @@ contract('Tokens', async (accounts) => {
     let tokenURI3 = "token metatdata 3";
 
     before(async () => {
-        sia20 = await SIA20.new({from: sia});
-        sia20Reward = await SIA20Reward.new({from: sia});
-        sia721 = await SIA721.new({from: sia});
+        espm20 = await ESPM20.new({from: espm});
+        espm20Reward = await ESPM20Reward.new({from: espm});
+        espm721 = await ESPM721.new({from: espm});
     });
 
-    it("Mint SIA20s and SIA20Rewards", async () => {
+    it("Mint ESPM20s and ESPM20Rewards", async () => {
       let initialSupply = 100;
 
-      // Test SIA20 can mint the correct amount to the correct accounts
-      await sia20.mint(sia, initialSupply, {from: sia});
-      let balance = (await sia20.balanceOf.call(sia)).toNumber();
+      // Test ESPM20 can mint the correct amount to the correct accounts
+      await espm20.mint(espm, initialSupply, {from: espm});
+      let balance = (await espm20.balanceOf.call(espm)).toNumber();
       assert.equal(balance, initialSupply, "Didn't mint the correct amount");
 
-      // Test SIA20Reward can mint the correct amount to the correct accounts
-      await sia20Reward.mint(sia, initialSupply, {from: sia});
-      balance = (await sia20Reward.balanceOf.call(sia)).toNumber();
+      // Test ESPM20Reward can mint the correct amount to the correct accounts
+      await espm20Reward.mint(espm, initialSupply, {from: espm});
+      balance = (await espm20Reward.balanceOf.call(espm)).toNumber();
       assert.equal(balance, initialSupply, "Didn't mint the correct amount");
     });
 
-    it("Transfer SIA20s and SIA20Rewards", async () => {
+    it("Transfer ESPM20s and ESPM20Rewards", async () => {
       let recipient = accounts[1];
 
-      // Test SIA20 can transfer the correct amount to the correct recipient
-      await sia20.transfer(recipient, 50, {from: sia});
+      // Test ESPM20 can transfer the correct amount to the correct recipient
+      await espm20.transfer(recipient, 50, {from: espm});
 
-      let balance = (await sia20.balanceOf.call(recipient)).toNumber();
-      assert.equal(balance, 50, "Didn't transfer 50 SIA20 successfully.");
+      let balance = (await espm20.balanceOf.call(recipient)).toNumber();
+      assert.equal(balance, 50, "Didn't transfer 50 ESPM20 successfully.");
 
-      balance = (await sia20.balanceOf.call(sia)).toNumber();
-      assert.equal(balance, 50, "Didn't calculate SIA20 remainder correctly.");
+      balance = (await espm20.balanceOf.call(espm)).toNumber();
+      assert.equal(balance, 50, "Didn't calculate ESPM20 remainder correctly.");
 
-      // Test SIA20Reward can transfer the correct amount to the correct recipient
-      await sia20Reward.transfer(recipient, 50, {from: sia});
+      // Test ESPM20Reward can transfer the correct amount to the correct recipient
+      await espm20Reward.transfer(recipient, 50, {from: espm});
 
-      balance = (await sia20Reward.balanceOf.call(recipient)).toNumber();
-      assert.equal(balance, 50, "Didn't transfer 50 SIA20Reward successfully.");
+      balance = (await espm20Reward.balanceOf.call(recipient)).toNumber();
+      assert.equal(balance, 50, "Didn't transfer 50 ESPM20Reward successfully.");
 
-      balance = (await sia20Reward.balanceOf.call(sia)).toNumber();
-      assert.equal(balance, 50, "Didn't calculate SIA20Reward remainder correctly.");
+      balance = (await espm20Reward.balanceOf.call(espm)).toNumber();
+      assert.equal(balance, 50, "Didn't calculate ESPM20Reward remainder correctly.");
     });
 
-    it("Approve and transfer SIA20s and SIA20Rewards", async () => {
+    it("Approve and transfer ESPM20s and ESPM20Rewards", async () => {
       let spender = accounts[1];
       let recipient = accounts[2];
 
-      // Test SIA20 can approve the correct amount to the spender and transfer the correct amount to the correct recipient
-      await sia20.approve(spender, 25, {from: sia});
+      // Test ESPM20 can approve the correct amount to the spender and transfer the correct amount to the correct recipient
+      await espm20.approve(spender, 25, {from: espm});
 
-      let allowance = (await sia20.allowance(sia, spender)).toNumber();
+      let allowance = (await espm20.allowance(espm, spender)).toNumber();
       assert.equal(allowance, 25, "Didn't give the spender the correct allowance amount.");
 
-      await sia20.transferFrom(sia, recipient, 25, {from: spender});
+      await espm20.transferFrom(espm, recipient, 25, {from: spender});
 
-      let balance = (await sia20.balanceOf.call(recipient)).toNumber();
-      assert.equal(balance, 25, "Didn't transfer 25 SIA20 successfully.");
+      let balance = (await espm20.balanceOf.call(recipient)).toNumber();
+      assert.equal(balance, 25, "Didn't transfer 25 ESPM20 successfully.");
 
-      balance = (await sia20.balanceOf.call(sia)).toNumber();
-      assert.equal(balance, 25, "Didn't calculate SIA20 remainder correctly.");
+      balance = (await espm20.balanceOf.call(espm)).toNumber();
+      assert.equal(balance, 25, "Didn't calculate ESPM20 remainder correctly.");
 
-      // Test SIA20Reward can approve the correct amount to the spender and transfer the correct amount to the correct recipient
-      await sia20Reward.approve(spender, 25, {from: sia});
+      // Test ESPM20Reward can approve the correct amount to the spender and transfer the correct amount to the correct recipient
+      await espm20Reward.approve(spender, 25, {from: espm});
 
-      allowance = (await sia20Reward.allowance(sia, spender)).toNumber();
+      allowance = (await espm20Reward.allowance(espm, spender)).toNumber();
       assert.equal(allowance, 25, "Didn't give the spender the correct allowance amount.");
 
-      await sia20Reward.transferFrom(sia, recipient, 25, {from: spender});
+      await espm20Reward.transferFrom(espm, recipient, 25, {from: spender});
 
-      balance = (await sia20Reward.balanceOf.call(recipient)).toNumber();
-      assert.equal(balance, 25, "Didn't transfer 25 SIA20Reward successfully.");
+      balance = (await espm20Reward.balanceOf.call(recipient)).toNumber();
+      assert.equal(balance, 25, "Didn't transfer 25 ESPM20Reward successfully.");
 
-      balance = (await sia20Reward.balanceOf.call(sia)).toNumber();
-      assert.equal(balance, 25, "Didn't calculate SIA20Reward remainder correctly.");
+      balance = (await espm20Reward.balanceOf.call(espm)).toNumber();
+      assert.equal(balance, 25, "Didn't calculate ESPM20Reward remainder correctly.");
     });
 
-    it("Mint SIA721s", async () => {
+    it("Mint ESPM721s", async () => {
 
-      await sia721.mintWithTokenURI(sia, tokenId1, tokenURI1, {from: sia});
-      await sia721.mintWithTokenURI(sia, tokenId2, tokenURI2, {from: sia});
-      await sia721.mintWithTokenURI(sia, tokenId3, tokenURI3, {from: sia});
+      await espm721.mintWithTokenURI(espm, tokenId1, tokenURI1, {from: espm});
+      await espm721.mintWithTokenURI(espm, tokenId2, tokenURI2, {from: espm});
+      await espm721.mintWithTokenURI(espm, tokenId3, tokenURI3, {from: espm});
 
-      let numTokens = (await sia721.balanceOf.call(sia)).toNumber();
+      let numTokens = (await espm721.balanceOf.call(espm)).toNumber();
       assert.equal(numTokens, 3, "Didn't mint all tokens successfully.");
 
-      let owner = (await sia721.ownerOf.call(tokenId1)).toString();
-      assert.equal(owner, sia, "Didn't give token1 to the correct owner.");
-      owner = (await sia721.ownerOf.call(tokenId2)).toString();
-      assert.equal(owner, sia, "Didn't give token2 to the correct owner.");
-      owner = (await sia721.ownerOf.call(tokenId3)).toString();
-      assert.equal(owner, sia, "Didn't give token3 to the correct owner.");
+      let owner = (await espm721.ownerOf.call(tokenId1)).toString();
+      assert.equal(owner, espm, "Didn't give token1 to the correct owner.");
+      owner = (await espm721.ownerOf.call(tokenId2)).toString();
+      assert.equal(owner, espm, "Didn't give token2 to the correct owner.");
+      owner = (await espm721.ownerOf.call(tokenId3)).toString();
+      assert.equal(owner, espm, "Didn't give token3 to the correct owner.");
 
-      let uri = (await sia721.tokenURI.call(tokenId1)).toString();
+      let uri = (await espm721.tokenURI.call(tokenId1)).toString();
       assert.equal(uri, tokenURI1, "Didn't give token1 to the correct uri.");
-      uri = (await sia721.tokenURI.call(tokenId2)).toString();
+      uri = (await espm721.tokenURI.call(tokenId2)).toString();
       assert.equal(uri, tokenURI2, "Didn't give token2 to the correct uri.");
-      uri = (await sia721.tokenURI.call(tokenId3)).toString();
+      uri = (await espm721.tokenURI.call(tokenId3)).toString();
       assert.equal(uri, tokenURI3, "Didn't give token3 to the correct uri.");
 
-      let token = (await sia721.tokenOfOwnerByIndex.call(sia, 0)).toNumber();
+      let token = (await espm721.tokenOfOwnerByIndex.call(espm, 0)).toNumber();
       assert.equal(token, tokenId1, "Token1 wasn't successfully added to list");
-      token = (await sia721.tokenOfOwnerByIndex.call(sia, 1)).toNumber();
+      token = (await espm721.tokenOfOwnerByIndex.call(espm, 1)).toNumber();
       assert.equal(token, tokenId2, "Token2 wasn't successfully added to list");
-      token = (await sia721.tokenOfOwnerByIndex.call(sia, 2)).toNumber();
+      token = (await espm721.tokenOfOwnerByIndex.call(espm, 2)).toNumber();
       assert.equal(token, tokenId3, "Token3 wasn't successfully added to list");
     });
 
-    it("Transfer SIA721", async () => {
+    it("Transfer ESPM721", async () => {
       let recipient = accounts[1];
-      await sia721.transferFrom(sia, recipient, tokenId1, {from: sia});
+      await espm721.transferFrom(espm, recipient, tokenId1, {from: espm});
 
-      let numTokens = (await sia721.balanceOf.call(recipient)).toNumber();
+      let numTokens = (await espm721.balanceOf.call(recipient)).toNumber();
       assert.equal(numTokens, 1, "Didn't transfer token1 successfully.");
 
-      let owner = (await sia721.ownerOf.call(tokenId1)).toString();
+      let owner = (await espm721.ownerOf.call(tokenId1)).toString();
       assert.equal(owner, recipient, "Didn't transfer token1 to the correct owner.");
 
-      let uri = (await sia721.tokenURI.call(tokenId1)).toString();
+      let uri = (await espm721.tokenURI.call(tokenId1)).toString();
       assert.equal(uri, tokenURI1, "Didn't give token1 to the correct uri.");
 
-      let token = (await sia721.tokenOfOwnerByIndex.call(recipient, 0)).toNumber();
+      let token = (await espm721.tokenOfOwnerByIndex.call(recipient, 0)).toNumber();
       assert.equal(token, tokenId1, "Token1 wasn't successfully added to list");
     });
 
-    it("Approve and transfer SIA721", async () => {
+    it("Approve and transfer ESPM721", async () => {
       let spender = accounts[1];
       let recipient = accounts[2];
 
       // Approve the escrow contract to transfer token1
-      await sia721.approve(spender, tokenId2, {from: sia});
+      await espm721.approve(spender, tokenId2, {from: espm});
 
       // Check that the approval was successfull
-      let approvedAddress = (await sia721.getApproved.call(tokenId2)).toString();
+      let approvedAddress = (await espm721.getApproved.call(tokenId2)).toString();
       assert.equal(approvedAddress, spender, "Didn't approve the spender to transfer token2.");
 
-      await sia721.transferFrom(sia, recipient, tokenId2, {from: spender});
+      await espm721.transferFrom(espm, recipient, tokenId2, {from: spender});
 
-      let numTokens = (await sia721.balanceOf.call(recipient)).toNumber();
+      let numTokens = (await espm721.balanceOf.call(recipient)).toNumber();
       assert.equal(numTokens, 1, "Didn't transfer token2 successfully.");
 
-      let owner = (await sia721.ownerOf.call(tokenId2)).toString();
+      let owner = (await espm721.ownerOf.call(tokenId2)).toString();
       assert.equal(owner, recipient, "Didn't transfer token2 to the correct owner.");
 
-      let uri = (await sia721.tokenURI.call(tokenId2)).toString();
+      let uri = (await espm721.tokenURI.call(tokenId2)).toString();
       assert.equal(uri, tokenURI2, "Didn't give token2 to the correct uri.");
 
-      let token = (await sia721.tokenOfOwnerByIndex.call(recipient, 0)).toNumber();
+      let token = (await espm721.tokenOfOwnerByIndex.call(recipient, 0)).toNumber();
       assert.equal(token, tokenId2, "Token2 wasn't successfully added to list");
     });
 });

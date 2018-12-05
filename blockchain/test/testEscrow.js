@@ -1,19 +1,19 @@
 let assert = require('chai').assert;
 let { catchError } = require('./utilities.js');
 
-let SIA20 = artifacts.require("SIA20");
-let SIA20Reward = artifacts.require("SIA20Reward");
-let SIA721 = artifacts.require("SIA721");
-let SIAEscrow = artifacts.require("SIAEscrow");
+let ESPM20 = artifacts.require("ESPM20");
+let ESPM20Reward = artifacts.require("ESPM20Reward");
+let ESPM721 = artifacts.require("ESPM721");
+let ESPMEscrow = artifacts.require("ESPMEscrow");
 
-contract('SIAEscrow', async (accounts) => {
-    let sia20;
-    let sia20Reward;
-    let sia721;
+contract('ESPMEscrow', async (accounts) => {
+    let espm20;
+    let espm20Reward;
+    let espm721;
     let escrow;
     let bad_escrow;
 
-    let sia = accounts[0];
+    let espm = accounts[0];
     let buyer = accounts[1];
 
     let tokenId1 = 12345;
@@ -31,72 +31,72 @@ contract('SIAEscrow', async (accounts) => {
     let mintAmount = 100;
 
     before(async () => {
-        sia20 = await SIA20.new({from: sia});
-        sia20Reward = await SIA20Reward.new({from: sia});
-        sia721 = await SIA721.new({from: sia});
+        espm20 = await ESPM20.new({from: espm});
+        espm20Reward = await ESPM20Reward.new({from: espm});
+        espm721 = await ESPM721.new({from: espm});
 
-        await sia721.mintWithTokenURI(sia, tokenId1, tokenURI1, {form: sia});
-        await sia721.mintWithTokenURI(sia, tokenId2, tokenURI2, {form: sia});
-        await sia721.mintWithTokenURI(sia, tokenId3, tokenURI3, {form: sia});
+        await espm721.mintWithTokenURI(espm, tokenId1, tokenURI1, {form: espm});
+        await espm721.mintWithTokenURI(espm, tokenId2, tokenURI2, {form: espm});
+        await espm721.mintWithTokenURI(espm, tokenId3, tokenURI3, {form: espm});
 
-        await sia20.mint(buyer, mintAmount, {form: sia});
-        await sia20Reward.mint(buyer, mintAmount, {form: sia});
+        await espm20.mint(buyer, mintAmount, {form: espm});
+        await espm20Reward.mint(buyer, mintAmount, {form: espm});
 
         // Create an escrow contract to sell token2
-        bad_escrow = await SIAEscrow.new(sia20.address, sia20Reward.address, sia721.address, tokenId2, tokenPrice2, {from: sia});
+        bad_escrow = await ESPMEscrow.new(espm20.address, espm20Reward.address, espm721.address, tokenId2, tokenPrice2, {from: espm});
     });
 
     it("Test simple escrow flow", async () => {
 
       // Create an escrow contract to sell token1
-      escrow = await SIAEscrow.new(sia20.address, sia20Reward.address, sia721.address, tokenId1, tokenPrice1, {from: sia});
+      escrow = await ESPMEscrow.new(espm20.address, espm20Reward.address, espm721.address, tokenId1, tokenPrice1, {from: espm});
       /*==========INIT STATE==========*/
       // Check escrow is in the init state
       let escrowState = await escrow.getState.call();
       assert.equal(escrowState, 0, "Escrow is not in init state.");
 
       // Approve the escrow contract to transfer token1
-      await sia721.approve(escrow.address, tokenId1, {from: sia});
+      await espm721.approve(escrow.address, tokenId1, {from: espm});
 
       // Check that the approval was successfull
-      let approvedAddress = (await sia721.getApproved.call(tokenId1)).toString();
+      let approvedAddress = (await espm721.getApproved.call(tokenId1)).toString();
       assert.equal(approvedAddress, escrow.address, "Didn't approve the escrow contract to transfer token1.");
 
       // The escrow checks that it has the right to transfer token1 and transfers the token to itself
-      await escrow.check721Approved({from: sia});
+      await escrow.check721Approved({from: espm});
       /*==========Approved721 STATE==========*/
       // Check escrow is in the approved state
       escrowState = await escrow.getState.call();
       assert.equal(escrowState, 1, "Escrow is not in the approved state.");
 
       // Check escrow received the token
-      assert.equal((await sia721.ownerOf.call(tokenId1)).toString(), escrow.address, "Escrow didn't receive token1.");
+      assert.equal((await espm721.ownerOf.call(tokenId1)).toString(), escrow.address, "Escrow didn't receive token1.");
 
       let approvedAmount = 8;
       let approvedRewardAmount = 2;
 
-      // Approve the escrow contract to transfer 8 SIA20s
-      await sia20.approve(escrow.address, approvedAmount, {from: buyer});
-      let allowance = (await sia20.allowance(buyer, escrow.address)).toNumber();
-      assert.equal(allowance, approvedAmount, "Didn't give the escrow contract the correct SIA20 allowance amount.");
-      // Approve the escrow contract to transfer 2 SIA20Rewardss
-      await sia20Reward.approve(escrow.address, approvedRewardAmount, {from: buyer});
-      let rewardAllowance = (await sia20Reward.allowance(buyer, escrow.address)).toNumber();
-      assert.equal(rewardAllowance, approvedRewardAmount, "Didn't give the escrow contract the correct SIA20Reward allowance amount.");
+      // Approve the escrow contract to transfer 8 ESPM20s
+      await espm20.approve(escrow.address, approvedAmount, {from: buyer});
+      let allowance = (await espm20.allowance(buyer, escrow.address)).toNumber();
+      assert.equal(allowance, approvedAmount, "Didn't give the escrow contract the correct ESPM20 allowance amount.");
+      // Approve the escrow contract to transfer 2 ESPM20Rewardss
+      await espm20Reward.approve(escrow.address, approvedRewardAmount, {from: buyer});
+      let rewardAllowance = (await espm20Reward.allowance(buyer, escrow.address)).toNumber();
+      assert.equal(rewardAllowance, approvedRewardAmount, "Didn't give the escrow contract the correct ESPM20Reward allowance amount.");
 
-      // The escrow checks that it has the right to transfer the SIA20/SIAReward Tokens and transfers them to itself
+      // The escrow checks that it has the right to transfer the ESPM20/ESPMReward Tokens and transfers them to itself
       await escrow.check20Approved({from: buyer});
       // /*==========READY STATE==========*/
       // Check escrow is in the ready state
       escrowState = await escrow.getState.call();
       assert.equal(escrowState, 2, "Escrow is not in the ready state.");
 
-      // Check escrow received the correct SIA20/SIAReward amounts
-      assert.equal((await sia20.balanceOf.call(escrow.address)).toNumber(), approvedAmount, "Escrow didn't receive the correct amount of SIA20.");
-      assert.equal((await sia20Reward.balanceOf.call(escrow.address)).toNumber(), approvedRewardAmount, "Escrow didn't receive the correct amount of SIA20Reward.");
+      // Check escrow received the correct ESPM20/ESPMReward amounts
+      assert.equal((await espm20.balanceOf.call(escrow.address)).toNumber(), approvedAmount, "Escrow didn't receive the correct amount of ESPM20.");
+      assert.equal((await espm20Reward.balanceOf.call(escrow.address)).toNumber(), approvedRewardAmount, "Escrow didn't receive the correct amount of ESPM20Reward.");
 
       // The buyer and seller settle the escrow
-      await escrow.settle({from: sia});
+      await escrow.settle({from: espm});
 
       // Check escrow is not in the finalized state
       escrowState = await escrow.getState.call();
@@ -108,35 +108,35 @@ contract('SIAEscrow', async (accounts) => {
       escrowState = await escrow.getState.call();
       assert.equal(escrowState, 3, "Escrow is not in the approved state.");
 
-      /*==========Check that the buyer got the SIA721 token==========*/
-      let numTokens = (await sia721.balanceOf.call(buyer)).toNumber();
+      /*==========Check that the buyer got the ESPM721 token==========*/
+      let numTokens = (await espm721.balanceOf.call(buyer)).toNumber();
       assert.equal(numTokens, 1, "Didn't transfer token1 successfully.");
 
-      let owner = (await sia721.ownerOf.call(tokenId1)).toString();
+      let owner = (await espm721.ownerOf.call(tokenId1)).toString();
       assert.equal(owner, buyer, "Didn't transfer token1 to the buyer.");
 
-      let token = (await sia721.tokenOfOwnerByIndex.call(buyer, 0)).toNumber();
+      let token = (await espm721.tokenOfOwnerByIndex.call(buyer, 0)).toNumber();
       assert.equal(token, tokenId1, "Token1 wasn't successfully added to list");
 
-      /*==========Check that the seller got the SIA20 and SIA20Reward tokens==========*/
-      let siaBalance = (await sia20.balanceOf.call(sia)).toNumber();
-      assert.equal(siaBalance, approvedAmount, "Didn't transfer the SIA20 successfully.");
+      /*==========Check that the seller got the ESPM20 and ESPM20Reward tokens==========*/
+      let espmBalance = (await espm20.balanceOf.call(espm)).toNumber();
+      assert.equal(espmBalance, approvedAmount, "Didn't transfer the ESPM20 successfully.");
 
-      let buyerBalance = (await sia20.balanceOf.call(buyer)).toNumber();
-      assert.equal(buyerBalance, mintAmount - approvedAmount, "Didn't calculate SIA20 remainder correctly.");
+      let buyerBalance = (await espm20.balanceOf.call(buyer)).toNumber();
+      assert.equal(buyerBalance, mintAmount - approvedAmount, "Didn't calculate ESPM20 remainder correctly.");
 
-      let siaRewardBalance = (await sia20Reward.balanceOf.call(sia)).toNumber();
-      assert.equal(siaRewardBalance, approvedRewardAmount, "Didn't transfer the SIA20Reward successfully.");
+      let espmRewardBalance = (await espm20Reward.balanceOf.call(espm)).toNumber();
+      assert.equal(espmRewardBalance, approvedRewardAmount, "Didn't transfer the ESPM20Reward successfully.");
 
-      let buyerRewardBalance = (await sia20Reward.balanceOf.call(buyer)).toNumber();
-      assert.equal(buyerRewardBalance, mintAmount - approvedRewardAmount, "Didn't calculate SIA20Reward remainder correctly.");
+      let buyerRewardBalance = (await espm20Reward.balanceOf.call(buyer)).toNumber();
+      assert.equal(buyerRewardBalance, mintAmount - approvedRewardAmount, "Didn't calculate ESPM20Reward remainder correctly.");
     });
 
     it("Test case when escrow can't be created", async () => {
 
-      // Can't create an escrow to sell a SIA721 token if the contract creator isn't the token owner
+      // Can't create an escrow to sell a ESPM721 token if the contract creator isn't the token owner
       let err;
-      [err] = await catchError(SIAEscrow.new(sia20.address, sia20Reward.address, sia721.address, tokenId1, tokenPrice1, {from: sia}));
+      [err] = await catchError(ESPMEscrow.new(espm20.address, espm20Reward.address, espm721.address, tokenId1, tokenPrice1, {from: espm}));
       if (!err)
             assert.fail("An escrow for token1 was created by non-owner");
     });
@@ -180,35 +180,35 @@ contract('SIAEscrow', async (accounts) => {
     it("Test case when escrow can't be moved to the ready state", async () => {
 
       // Approve the escrow contract to transfer token1
-      await sia721.approve(bad_escrow.address, tokenId2, {from: sia});
+      await espm721.approve(bad_escrow.address, tokenId2, {from: espm});
 
       // Check that the approval was successfull
-      let approvedAddress = (await sia721.getApproved.call(tokenId2)).toString();
+      let approvedAddress = (await espm721.getApproved.call(tokenId2)).toString();
       assert.equal(approvedAddress, bad_escrow.address, "Didn't approve the escrow contract to transfer token1.");
 
       // The escrow checks that it has the right to transfer token1
-      await bad_escrow.check721Approved({from: sia});
+      await bad_escrow.check721Approved({from: espm});
       /*==========APPROVED STATE==========*/
       // Check escrow is in the approved state
       escrowState = await bad_escrow.getState.call();
       assert.equal(escrowState, 1, "Escrow is not in the approved state.");
 
       // Check escrow received the token
-      assert.equal((await sia721.ownerOf.call(tokenId2)).toString(), bad_escrow.address, "Escrow didn't receive token1.");
+      assert.equal((await espm721.ownerOf.call(tokenId2)).toString(), bad_escrow.address, "Escrow didn't receive token1.");
 
       let approvedAmount = 8;
       let approvedRewardAmount = 2;
 
-      // Approve the escrow contract to transfer 8 SIA20s
-      await sia20.approve(bad_escrow.address, approvedAmount, {from: buyer});
-      let allowance = (await sia20.allowance(buyer, bad_escrow.address)).toNumber();
-      assert.equal(allowance, approvedAmount, "Didn't give the escrow contract the correct SIA20 allowance amount.");
-      // Approve the escrow contract to transfer 2 SIA20Rewardss
-      await sia20Reward.approve(bad_escrow.address, approvedRewardAmount, {from: buyer});
-      let rewardAllowance = (await sia20Reward.allowance(buyer, bad_escrow.address)).toNumber();
-      assert.equal(rewardAllowance, approvedRewardAmount, "Didn't give the escrow contract the correct SIA20Reward allowance amount.");
+      // Approve the escrow contract to transfer 8 ESPM20s
+      await espm20.approve(bad_escrow.address, approvedAmount, {from: buyer});
+      let allowance = (await espm20.allowance(buyer, bad_escrow.address)).toNumber();
+      assert.equal(allowance, approvedAmount, "Didn't give the escrow contract the correct ESPM20 allowance amount.");
+      // Approve the escrow contract to transfer 2 ESPM20Rewardss
+      await espm20Reward.approve(bad_escrow.address, approvedRewardAmount, {from: buyer});
+      let rewardAllowance = (await espm20Reward.allowance(buyer, bad_escrow.address)).toNumber();
+      assert.equal(rewardAllowance, approvedRewardAmount, "Didn't give the escrow contract the correct ESPM20Reward allowance amount.");
 
-      // The escrow checks that it has the right to transfer the SIA20/SIAReward Tokens and transfers them to itself
+      // The escrow checks that it has the right to transfer the ESPM20/ESPMReward Tokens and transfers them to itself
       let err;
       [err] = await catchError(bad_escrow.check20Approved({from: buyer}));
       if (!err)
@@ -220,41 +220,41 @@ contract('SIAEscrow', async (accounts) => {
       let approvedAmount = 12;
       let approvedRewardAmount = 8;
 
-      // Approve the escrow contract to transfer 8 SIA20s
-      await sia20.approve(bad_escrow.address, approvedAmount, {from: buyer});
-      let allowance = (await sia20.allowance(buyer, bad_escrow.address)).toNumber();
-      assert.equal(allowance, approvedAmount, "Didn't give the escrow contract the correct SIA20 allowance amount.");
-      // Approve the escrow contract to transfer 2 SIA20Rewardss
-      await sia20Reward.approve(bad_escrow.address, approvedRewardAmount, {from: buyer});
-      let rewardAllowance = (await sia20Reward.allowance(buyer, bad_escrow.address)).toNumber();
-      assert.equal(rewardAllowance, approvedRewardAmount, "Didn't give the escrow contract the correct SIA20Reward allowance amount.");
+      // Approve the escrow contract to transfer 8 ESPM20s
+      await espm20.approve(bad_escrow.address, approvedAmount, {from: buyer});
+      let allowance = (await espm20.allowance(buyer, bad_escrow.address)).toNumber();
+      assert.equal(allowance, approvedAmount, "Didn't give the escrow contract the correct ESPM20 allowance amount.");
+      // Approve the escrow contract to transfer 2 ESPM20Rewardss
+      await espm20Reward.approve(bad_escrow.address, approvedRewardAmount, {from: buyer});
+      let rewardAllowance = (await espm20Reward.allowance(buyer, bad_escrow.address)).toNumber();
+      assert.equal(rewardAllowance, approvedRewardAmount, "Didn't give the escrow contract the correct ESPM20Reward allowance amount.");
 
-      // The escrow checks that it has the right to transfer the SIA20/SIAReward Tokens and transfers them to itself
+      // The escrow checks that it has the right to transfer the ESPM20/ESPMReward Tokens and transfers them to itself
       await bad_escrow.check20Approved({from: buyer});
       // /*==========READY STATE==========*/
       // Check escrow is in the ready state
       escrowState = await bad_escrow.getState.call();
       assert.equal(escrowState, 2, "Escrow is not in the ready state.");
 
-      // Check escrow received the correct SIA20/SIAReward amounts
-      assert.equal((await sia20.balanceOf.call(bad_escrow.address)).toNumber(), approvedAmount, "Escrow didn't receive the correct amount of SIA20.");
-      assert.equal((await sia20Reward.balanceOf.call(bad_escrow.address)).toNumber(), approvedRewardAmount, "Escrow didn't receive the correct amount of SIA20Reward.");
+      // Check escrow received the correct ESPM20/ESPMReward amounts
+      assert.equal((await espm20.balanceOf.call(bad_escrow.address)).toNumber(), approvedAmount, "Escrow didn't receive the correct amount of ESPM20.");
+      assert.equal((await espm20Reward.balanceOf.call(bad_escrow.address)).toNumber(), approvedRewardAmount, "Escrow didn't receive the correct amount of ESPM20Reward.");
 
 
-      let sia20Balance = (await sia20.balanceOf.call(buyer)).toNumber();
-      let sia20RewardBalance = (await sia20Reward.balanceOf.call(buyer)).toNumber();
+      let espm20Balance = (await espm20.balanceOf.call(buyer)).toNumber();
+      let espm20RewardBalance = (await espm20Reward.balanceOf.call(buyer)).toNumber();
 
-      // The escrow checks that it has the right to transfer the SIA20/SIAReward Tokens and transfers them to itself
+      // The escrow checks that it has the right to transfer the ESPM20/ESPMReward Tokens and transfers them to itself
       let err;
       [err] = await catchError(bad_escrow.cancel({from: accounts[2]}));
       if (!err)
             assert.fail("The escrow can't be canceled by a non-participant");
 
-      // SIA cancels the escrow
-      await bad_escrow.cancel({from: sia});
+      // ESPM cancels the escrow
+      await bad_escrow.cancel({from: espm});
 
-      assert.equal((await sia20.balanceOf.call(buyer)).toNumber(), sia20Balance + approvedAmount, "Didn't refund the correct amount of SIA20 tokens.");
-      assert.equal((await sia20Reward.balanceOf.call(buyer)).toNumber(), sia20RewardBalance + approvedRewardAmount, "Didn't refund the correct amount of SIA20Reward tokens.");
-      assert.equal((await sia721.ownerOf.call(tokenId2)).toString(), sia, "Didn't refund the SIA721 token.");
+      assert.equal((await espm20.balanceOf.call(buyer)).toNumber(), espm20Balance + approvedAmount, "Didn't refund the correct amount of ESPM20 tokens.");
+      assert.equal((await espm20Reward.balanceOf.call(buyer)).toNumber(), espm20RewardBalance + approvedRewardAmount, "Didn't refund the correct amount of ESPM20Reward tokens.");
+      assert.equal((await espm721.ownerOf.call(tokenId2)).toString(), espm, "Didn't refund the ESPM721 token.");
     });
 });

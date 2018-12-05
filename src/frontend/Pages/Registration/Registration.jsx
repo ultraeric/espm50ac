@@ -11,7 +11,7 @@ import {backend} from 'frontend/backendConnector/Backend';
 import {makePurchase} from "shared/objects";
 import {getDate} from "utils/timingUtils";
 
-class Marketplace extends React.Component {
+class Registration extends React.Component {
   constructor() {
     super();
     this.bindAllMethods();
@@ -26,10 +26,10 @@ class Marketplace extends React.Component {
 
   deactivateOverlay() { this.setState({popupActive: false}); }
 
-  purchaseProduct(product, quantity) {
-    let purchase = makePurchase(product.name, product.price, product.description, product.image, quantity, getDate(), []);
-    let creds = {flyerNumber: globalState.me.flyerNumber, password: globalState.me.contact.phoneNumber};
-    backend.purchases.makePurchase(purchase, creds);
+  purchaseProduct(product, comment) {
+    let purchase = makePurchase(product.name, product.price, product.description, product.image, comment, getDate(), []);
+    let auth = {userId: globalState.me.userId, password: globalState.me.userId};
+    backend.tracking.registerItem(auth, purchase);
   }
 
   productUpdate(data) {
@@ -38,11 +38,11 @@ class Marketplace extends React.Component {
   }
 
   componentWillMount() {
-    backend.on('/response/purchases/getProducts', this.productUpdate);
+    backend.on('/response/tracking/getProducts', this.productUpdate);
   }
 
   componentWillUnmount() {
-    backend.removeListener('/response/purchases/getProducts', this.productUpdate);
+    backend.removeListener('/response/tracking/getProducts', this.productUpdate);
   }
 
   render() {
@@ -54,13 +54,13 @@ class Marketplace extends React.Component {
       (product) => product.name.toLowerCase().includes(this.state.searchTerm.toLowerCase())
     );
     return (
-      <div className={'marketplace-page info-page'}>
+      <div className={'registration-page info-page'}>
         <_Backdrop/>
         <div className={'title-area'}>
           <Row>
             <Col xs={0} md={1} lg={2}/>
             <Col xs={12} md={10} lg={8}>
-              <h4 className={'centered'}>Krisshop Marketplace</h4>
+              <h4 className={'centered'}>Reusable Product Registration</h4>
               <Input label={'Search'}
                      value={this.state.searchTerm}
                      changeValue={(val) => this.setState({searchTerm: val})}></Input>
@@ -78,7 +78,7 @@ class Marketplace extends React.Component {
   }
 }
 
-Marketplace = withRouter(Guac(Marketplace));
+Registration = withRouter(Guac(Registration));
 
-export default Marketplace;
-export {Marketplace};
+export default Registration;
+export {Registration};

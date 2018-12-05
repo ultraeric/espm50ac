@@ -10,7 +10,7 @@ import {TabList} from 'yui-md/lib/TabList';
 import {Menu} from 'yui-md/lib/Menu';
 import {MenuItem} from 'yui-md/lib/MenuItem';
 import {_NavCreator} from './_NavCreator';
-import logo from 'static/images/logos/sia.svg';
+import logo from 'static/images/logos/espm.png';
 
 
 class Header extends React.Component {
@@ -44,7 +44,7 @@ class Header extends React.Component {
                         marginBottom: '-12px'}}
                src={logo}/>
         </a>
-        <h4 id={'sia-logo-text'}
+        <h4 id={'espm-logo-text'}
           onClick={() => window.location.href = '/'}></h4>
         <_NavCreator/>
       </AppBar>

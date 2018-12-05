@@ -1,14 +1,3 @@
-function makeClaim(flyerNumber, flightNumber, amount, userFeedback) {
-  return {flyerNumber: flyerNumber,
-    flightNumber:flightNumber,
-    amount: amount,
-    userFeedback: userFeedback};
-}
-
-function cleanClaim(obj) {
-  return makeClaim(obj.flyerNumber, obj.flightNumber, obj.amount, obj.userFeedback);
-}
-
 function makePurchase(name, price, description, image, quantity, date, tracking) {
   quantity = parseInt(quantity);
   price = parseInt(price);
@@ -28,10 +17,10 @@ function cleanPurchase(obj) {
 }
 
 const events = {
-  ordered: 'ordered',
-  shipped: 'shipped',
-  ready: 'ready',
-  received: 'received'
+  created: 'created',
+  purchased: 'purchased',
+  edited: 'edited',
+  recycled: 'recycled'
 };
 
 function makePurchaseEvent(date, event, description) {
@@ -49,5 +38,5 @@ function cleanPurchaseEvent(obj) {
   return makePurchaseEvent(obj.date, obj.event, obj.description);
 }
 
-export default makeClaim;
-export { makeClaim, cleanClaim, makePurchase, cleanPurchase, makePurchaseEvent, cleanPurchaseEvent, events };
+export default makePurchase;
+export { makePurchase, cleanPurchase, makePurchaseEvent, cleanPurchaseEvent, events };

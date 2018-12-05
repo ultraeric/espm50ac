@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Guac} from 'guac-hoc/lib/Guac';
 
-import logo from 'static/images/logos/sia.svg';
+import logo from 'static/images/logos/espm.png';
 
 class _Backdrop extends React.Component {
   constructor() {

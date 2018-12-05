@@ -1,10 +1,8 @@
 import products from './products';
 
-var globalState = {
+let globalState = {
   me: null,
-  exps: [],
-  products: products,
-  purchases: []
+  products: products
 };
 
 window.globalState = globalState;

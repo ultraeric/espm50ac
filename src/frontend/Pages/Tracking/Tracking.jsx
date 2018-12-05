@@ -6,9 +6,9 @@ import {_Backdrop} from '../_Backdrop';
 
 import {backend} from 'frontend/backendConnector/Backend';
 import {globalState} from 'static/data/globalState';
-import {makeProfileCard, makePurchasesCard, makePurchasesOverlay} from './components';
+import {makeProfileCard, makeTrackingCard, makeTrackingOverlay} from './components';
 
-class Purchases extends React.Component {
+class Tracking extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -19,9 +19,21 @@ class Purchases extends React.Component {
   }
 
   componentWillMount() {
+    backend.on('/response/tracking/getAll', this.trackingResponse);
   }
 
   componentWillUnmount() {
+    backend.removeListener('/response/tracking/getAll', this.trackingResponse);
+  }
+
+  trackingResponse(tracking) {
+    globalState.tracking = tracking;
+    this.forceUpdate();
+  }
+
+  update(purchase, comment) {
+    let creds = {userId: globalState.me.userId, password: globalState.me.userId};
+    backend.tracking.edit(creds, purchase, comment);
   }
 
   activateOverlay(purchase) { this.setState({popupActive: true, purchase: purchase}); }
@@ -29,8 +41,8 @@ class Purchases extends React.Component {
   deactivateOverlay() { this.setState({popupActive: false}); }
 
   confirmPurchase(purchase) {
-    let creds = {flyerNumber: globalState.me.flyerNumber, password: globalState.me.contact.phoneNumber};
-    backend.purchases.confirmPurchase(purchase, creds);
+    let creds = {userId: globalState.me.userId, password: globalState.me.userId};
+    backend.tracking.commit(creds, purchase);
   }
 
   render() {
@@ -39,27 +51,28 @@ class Purchases extends React.Component {
       return null;
     }
     let me = globalState.me;
-    let name = me.firstName + ' ' + me.lastName;
+    let name = me.userId;
     return (
-      <div className={'purchases-page info-page'}>
+      <div className={'tracking-page info-page'}>
         <_Backdrop/>
         <div className={'title-area'}>
-          {makeProfileCard(name, me.loyaltyTierName, me.tokens, me.rewardTokens)}
+          {makeProfileCard(name, me.numTokens)}
         </div>
         <div className={'info-area'}>
-          {makePurchasesCard(globalState.purchases, this.activateOverlay)}
-          {makePurchasesOverlay(
+          {makeTrackingCard(globalState.tracking, this.activateOverlay)}
+          {makeTrackingOverlay(
             this.state.popupActive,
             this.state.purchase,
             this.deactivateOverlay,
-            this.confirmPurchase)}
+            this.confirmPurchase,
+            this.update)}
         </div>
       </div>
     );
   }
 }
 
-Purchases = withRouter(Guac(Purchases));
+Tracking = withRouter(Guac(Tracking));
 
-export default Purchases;
-export {Purchases};
+export default Tracking;
+export {Tracking};

@@ -1,31 +1,31 @@
 let {
-  SIAEscrowJSON,
-  SIA20Contract,
-  SIA20RewardContract,
-  SIA721Contract,
-  SIAEscrowContract,
+  ESPMEscrowJSON,
+  ESPM20Contract,
+  ESPM20RewardContract,
+  ESPM721Contract,
+  ESPMEscrowContract,
   accounts,
-  sia
+  espm
 } = require('./ethereumSetup.js');
 
 import {Guac} from 'guac-hoc/lib/Guac';
 
 
-class SIA20 {
+class ESPM20 {
 
-  // Pass in the SIA20 or SIA20Reward contract Object into the constructor.
+  // Pass in the ESPM20 or ESPM20Reward contract Object into the constructor.
   // Their APIs are the same.
-  constructor(SIA20Contract) {
-    this.instance = SIA20Contract;
+  constructor(ESPM20Contract) {
+    this.instance = ESPM20Contract;
     this.bindAllMethods();
   }
 
   /**
-  * Mints a given amount of SIA20 tokens for a given owner
+  * Mints a given amount of ESPM20 tokens for a given owner
   *
   * @param sender String address of the function caller
   * @param to String address of the owner account
-  * @param amount Amount of SIA20 tokens to mint
+  * @param amount Amount of ESPM20 tokens to mint
   * @return Promise
   */
   mint(sender, to, amount) {
@@ -129,14 +129,14 @@ class SIA20 {
   }
 }
 
-class SIA721 {
+class ESPM721 {
   constructor() {
-    this.instance = SIA721Contract;
+    this.instance = ESPM721Contract;
     this.bindAllMethods();
   }
 
   /**
-  * Mints a SIA721 token with a given id and URI for a given owner
+  * Mints a ESPM721 token with a given id and URI for a given owner
   *
   * @param sender String address of the function caller
   * @param to String address of the owner account
@@ -149,7 +149,7 @@ class SIA721 {
   }
 
   /**
-  * Burns the SIA721 token with a given id
+  * Burns the ESPM721 token with a given id
   *
   * @param sender String address of the function caller (should be owner or approved spender)
   * @param tokenId Integer ID of the token to be burned
@@ -244,23 +244,23 @@ class SIA721 {
   }
 }
 
-class SIAEscrow {
+class ESPMEscrow {
 
   /**
-  * Class constructor. Deploys an SIAEscrow
+  * Class constructor. Deploys an ESPMEscrow
   *
-  * @param owner String address of the escrow and SIA721 owner
+  * @param owner String address of the escrow and ESPM721 owner
   * @param tokenId Integer ID
   * @param tokenPrice Integer price of token
   */
   constructor(owner, tokenId, tokenPrice) {
     this.bindAllMethods();
     this.instancePromise
-    = this._deploySIAEscrow(
+    = this._deployESPMEscrow(
       owner,
-      SIA20Contract.options.address,
-      SIA20RewardContract.options.address,
-      SIA721Contract.options.address,
+      ESPM20Contract.options.address,
+      ESPM20RewardContract.options.address,
+      ESPM721Contract.options.address,
       tokenId,
       tokenPrice
     );
@@ -271,22 +271,22 @@ class SIAEscrow {
   }
 
   /**
-  * Deploys an SIAEscrow. Won't deploy again.
+  * Deploys an ESPMEscrow. Won't deploy again.
   *
-  * @param owner String address of the escrow and SIA721 owner
+  * @param owner String address of the escrow and ESPM721 owner
   * @param tokenId Integer ID
   * @param tokenPrice Integer price of token
-  * @return Promise of the SIAEscrow instance
+  * @return Promise of the ESPMEscrow instance
   */
-  _deploySIAEscrow(owner, SIA20Addr, SIA20RewardAddr, SIA721Addr, tokenId, tokenPrice) {
+  _deployESPMEscrow(owner, ESPM20Addr, ESPM20RewardAddr, ESPM721Addr, tokenId, tokenPrice) {
     if (typeof this.instance !== 'undefined') {
       return this.instance;
     }
 
-    return SIAEscrowContract
+    return ESPMEscrowContract
     .deploy({
-      data: SIAEscrowJSON.bytecode,
-      arguments: [SIA20Addr, SIA20RewardAddr, SIA721Addr, tokenId, tokenPrice]
+      data: ESPMEscrowJSON.bytecode,
+      arguments: [ESPM20Addr, ESPM20RewardAddr, ESPM721Addr, tokenId, tokenPrice]
     })
     .send({
       from: owner,
@@ -295,7 +295,7 @@ class SIAEscrow {
   }
 
   /**
-  * Checks that the Escrow can spend the seller's SIA721 token and transfers
+  * Checks that the Escrow can spend the seller's ESPM721 token and transfers
   * the token to itself
   *
   * @param sender String address of the function caller
@@ -310,11 +310,11 @@ class SIAEscrow {
   }
 
   /**
-  * Checks that the Escrow can spend the buyer's SIA20/SIA20Reward tokens and
+  * Checks that the Escrow can spend the buyer's ESPM20/ESPM20Reward tokens and
   * transfers the tokens to itself.
-  * The sum of the SIA20 and SIA20Reward tokens spent must be greater than the
-  * SIA721 token price.
-  * The buyer must give the contract enough SIA20 or SIA20Reward allowances so
+  * The sum of the ESPM20 and ESPM20Reward tokens spent must be greater than the
+  * ESPM721 token price.
+  * The buyer must give the contract enough ESPM20 or ESPM20Reward allowances so
   * they're greater than or equal to tokenAmount and rewardAmount respectively.
   *
   * @param sender String address of the function caller
@@ -376,7 +376,7 @@ class SIAEscrow {
    * @returns {Promise} Promise that returns the token URI.
    */
   getTokenURI(sender) {
-    return SIA721Contract.methods.tokenURI(this.tokenId).call({from: sender});
+    return ESPM721Contract.methods.tokenURI(this.tokenId).call({from: sender});
   }
 
   /**
@@ -385,7 +385,7 @@ class SIAEscrow {
    * @return {*}
    */
   getTrackingTokenURI(sender) {
-    return SIA721Contract.methods.tokenURI(this.trackingTokenId).call({from: sender});
+    return ESPM721Contract.methods.tokenURI(this.trackingTokenId).call({from: sender});
   }
 
   /**
@@ -397,13 +397,13 @@ class SIAEscrow {
   }
 }
 
-SIA20 = Guac(SIA20);
-SIA721 = Guac(SIA721);
-SIAEscrow = Guac(SIAEscrow);
+ESPM20 = Guac(ESPM20);
+ESPM721 = Guac(ESPM721);
+ESPMEscrow = Guac(ESPMEscrow);
 
-let sia20 = new SIA20(SIA20Contract);
-let sia20reward = new SIA20(SIA20RewardContract)
-let sia721 = new SIA721();
+let espm20 = new ESPM20(ESPM20Contract);
+let espm20reward = new ESPM20(ESPM20RewardContract)
+let espm721 = new ESPM721();
 
 class Accounts {
   constructor () {
@@ -412,27 +412,29 @@ class Accounts {
     this.bindAllMethods();
   }
 
-  register(krisflyerNumber) {
+  register(userId) {
     let acct = this.newAccounts.pop();
-    this.accounts[krisflyerNumber] = acct;
-    sia20.mint(sia, acct, Math.floor(Math.random() * (200000)) + 1000);
-    return acct;
+    this.accounts[userId] = acct;
+    return espm20.mint(espm, acct, Math.floor(Math.random() * (200000)) + 1000)
+      .then(() => {
+        return acct;
+      });
   }
 
-  getAccount(krisflyerNumber) {
-    return this.accounts[krisflyerNumber];
+  getAccount(userId) {
+    return this.accounts[userId];
   }
 
-  bootstrap(krisflyerNumber) {
-    let acct = this.register(krisflyerNumber);
-    return sia20.mint(sia, acct, Math.floor(Math.random() * (20000)) + 1000)
-      .then(() => console.log('boostrapping ' + krisflyerNumber));
+  bootstrap(userId) {
+    let acct = this.register(userId);
+    return espm20.mint(espm, acct, Math.floor(Math.random() * (20000)) + 1000)
+      .then(() => console.log('boostrapping ' + userId));
   }
 }
 Accounts = Guac(Accounts);
 let globalAccounts = new Accounts();
 
-class SIANFT {
+class ESPMNFT {
   constructor() {
     this.bindAllMethods();
     this.gtc = 0;
@@ -440,7 +442,7 @@ class SIANFT {
     this.newTokens = {};
     this.userTokens = {};
     this.escrows = {};
-    // sia721.totalSupply(sia).then((supply) => {console.log(supply); this.gtc = supply;});
+    // espm721.totalSupply(espm).then((supply) => {console.log(supply); this.gtc = supply;});
   }
 
   /**
@@ -457,7 +459,7 @@ class SIANFT {
         this.newTokens[key].push(this.gtc);
       }
       let callback = ((tokenId) => (() => tokenId)) (this.gtc);
-      return sia721.mint(sia, sia, this.gtc, uniqueData).then(callback);
+      return espm721.mint(espm, espm, this.gtc, uniqueData).then(callback);
     } else {
       throw(new Error('Couldn\'t mint ERC721 token.'));
     }
@@ -467,55 +469,50 @@ class SIANFT {
    *
    * @param key
    * @param purchase
-   * @param krisflyerNumber
+   * @param userId
    */
-  initEscrow(key, purchase, krisflyerNumber) {
-    let rootTokens = [];
-    let userId = globalAccounts.getAccount(krisflyerNumber);
-    if (purchase.quantity > 0 &&
-          this.newTokens[key] &&
-          this.newTokens[key].length >= purchase.quantity &&
-          typeof(key) === 'string') {
-      for (let _=0; _ < purchase.quantity; _++) {
-        rootTokens.push(this.newTokens[key].pop());
-      }
-      purchase.prevTokens = rootTokens;
-      return new Promise((resolve, reject) => resolve())
-        .then(() => Promise.all(rootTokens.map((token) => sia721.burn(sia, token))))
-        .then(() => this.mint('purchase', JSON.stringify(purchase)))
-        .then((tokenId) => {
-          // Create the escrow and add it to the open escrow list.
-          let newEscrow = new SIAEscrow(sia, tokenId, purchase.quantity * purchase.price);
-          if (Object.keys(this.escrows).includes(userId)) {
-            this.escrows[userId].push(newEscrow);
-          } else {
-            this.escrows[userId] = [newEscrow];
-          }
-          return Promise.all([newEscrow.address(), tokenId, newEscrow]);
+  initEscrow(key, purchase, userId) {
+    let userAddr = globalAccounts.getAccount(userId);
+
+    return this.mint(key, 'N/A')
+      .then((rootTokenId) => {
+        purchase.prevTokens = [rootTokenId];
+        return [rootTokenId];
+      }).then((rootTokenIds) => {
+        return Promise.all(rootTokenIds.map((tokenId) => espm721.burn(espm, tokenId)));
+      }).then(() => {
+        return this.mint('purchase', JSON.stringify(purchase));
+      }).then((tokenId) => {
+        let newEscrow = new ESPMEscrow(espm, tokenId, purchase.price);
+        if (Object.keys(this.escrows).includes(userAddr)) {
+          this.escrows[userAddr].push(newEscrow);
+        } else {
+          this.escrows[userAddr] = [newEscrow];
+        }
+        return Promise.all([newEscrow.address(), tokenId, newEscrow]);
         }).then((arr) => {
           // Approve the escrow to send the ERC721 token, then send them to contract
           let escrow = arr[2];
-          return sia721.approve(sia, arr[0], arr[1]).then(() => Promise.all([arr[0], escrow.check721Approved(sia), escrow]));
+          return espm721.approve(espm, arr[0], arr[1]).then(() => Promise.all([arr[0], escrow.check721Approved(espm), escrow]));
         }).then((arr) => {
           // Approve the escrow to send the ERC20 tokens, then send them to contract
           let escrow = arr[2];
           let newEscrowAddress = arr[0];
-          return sia20.approve(userId, newEscrowAddress, purchase.quantity * purchase.price)
-            .then(() => Promise.all([escrow.check20Approved(userId), escrow]));
+          return espm20.approve(userAddr, newEscrowAddress, purchase.price)
+            .then(() => Promise.all([escrow.check20Approved(userAddr), escrow]));
         });
-      }
   }
 
   /**
    *
    * @param purchase
-   * @param krisflyerNumber
+   * @param userId
    * @return {Promise<[any]>}
    */
-  getEscrow(purchase, krisflyerNumber) {
-    return this.getEscrows(krisflyerNumber)
+  getEscrow(purchase, userId) {
+    return this.getEscrows(userId)
       .then((escrows) => {
-        return Promise.all([Promise.all(escrows.map((escrow) => escrow.getTokenURI(sia))), escrows]);
+        return Promise.all([Promise.all(escrows.map((escrow) => escrow.getTokenURI(espm))), escrows]);
       }).then((arr) => {
         let tokenURIs = arr[0];
         let escrows = arr[1];
@@ -532,11 +529,11 @@ class SIANFT {
   /**
    *
    * @param purchase
-   * @param krisflyerNumber
+   * @param userId
    * @return {Promise} Returns a promise that resolves to nothing
    */
-  changeEscrow(purchase, krisflyerNumber) {
-    return this.getEscrow(purchase, krisflyerNumber)
+  changeEscrow(purchase, userId) {
+    return this.getEscrow(purchase, userId)
       .then((escrow) => {
         return Promise.all([this.mint('tracking', JSON.stringify(purchase)), escrow])
       }).then((arr) => {
@@ -546,41 +543,44 @@ class SIANFT {
       });
   }
 
-  commitEscrow(purchase, krisflyerNumber) {
-    return this.changeEscrow(purchase, krisflyerNumber)
-      .then(() => this.getEscrow(purchase, krisflyerNumber))
+  commitEscrow(purchase, userId) {
+    return this.changeEscrow(purchase, userId)
+      .then(() => this.getEscrow(purchase, userId))
       .then((escrow) => {
-        return escrow.settle(sia).then(() => escrow.settle(globalAccounts.getAccount(krisflyerNumber)));
+        return escrow.settle(espm).then(() => escrow.settle(globalAccounts.getAccount(userId)));
       });
   }
 
   /**
-   * @param krisflyerNumber: number
+   * @param userId: number
    * @return Promise: A Promise that resolves to the escrows of this user.
    * **/
-  getEscrows(krisflyerNumber) {
-    let userId = globalAccounts.getAccount(krisflyerNumber);
-    return Promise.all(this.escrows[userId] || []);
+  getEscrows(userId) {
+    let userAddr = globalAccounts.getAccount(userId);
+    return Promise.all(this.escrows[userAddr] || [])
+      .then((escrows) => {
+        return escrows;
+      });
   }
 
-  getTokens(krisflyerNumber) {
-    let userId = globalAccounts.getAccount(krisflyerNumber);
-    return this.userTokens[userId];
+  getTokens(userId) {
+    let userAddr = globalAccounts.getAccount(userId);
+    return this.userTokens[userAddr];
   }
 
   /**
    *
-   * @param krisflyerNumber: number for the flyer
-   * @return Promise: A Promise that resolves to the purchases of this krisFlyer
+   * @param userId: number for the flyer
+   * @return Promise: A Promise that resolves to the tracking of this user
    */
-  getPurchases(krisflyerNumber) {
-    return this.getEscrows(krisflyerNumber)
+  getTracking(userId) {
+    return this.getEscrows(userId)
       .then((escrows) => {
         // Get Token URI Promises for all escrow tokens and finished tokens.
-        let uriPromises = escrows.map((escrow) => escrow.getTrackingTokenURI(sia));
-        let currentTokens = this.getTokens(krisflyerNumber) || [];
+        let uriPromises = escrows.map((escrow) => escrow.getTrackingTokenURI(espm));
+        let currentTokens = this.getTokens(userId) || [];
         for (let token of currentTokens) {
-          uriPromises.push(sia721.tokenURI(sia, token));
+          uriPromises.push(espm721.tokenURI(espm, token));
         }
         return Promise.all(uriPromises);
       }).then((uris) => {
@@ -589,49 +589,49 @@ class SIANFT {
   }
 }
 
-SIANFT = Guac(SIANFT);
-let sianft = new SIANFT();
+ESPMNFT = Guac(ESPMNFT);
+let espmnft = new ESPMNFT();
 
-class SIAToken {
+class ESPMToken {
   constructor() {
     this.bindAllMethods();
   }
 
-  mint(krisflyerNumber, numTokens) {
-    let userId = globalAccounts.getAccount(krisflyerNumber);
-    return sia20reward.mint(sia, userId, numTokens);
+  mint(userId, numTokens) {
+    let userAddr = globalAccounts.getAccount(userId);
+    return espm20reward.mint(espm, userAddr, numTokens);
   }
 
   /**
    *
-   * @param krisflyerNumber
+   * @param userId
    * @return {Promise} Promise that gives the reward balance of a user.
    */
-  numRewardTokens(krisflyerNumber) {
-    let userId = globalAccounts.getAccount(krisflyerNumber);
-    return sia20reward.balanceOf(userId, userId);
+  numRewardTokens(userId) {
+    let userAddr = globalAccounts.getAccount(userId);
+    return espm20reward.balanceOf(userAddr, userAddr);
   }
 
   /**
    *
-   * @param krisflyerNumber
+   * @param userId
    * @return {Promise} Promise that gives the token balance of a user.
    */
-  numTokens(krisflyerNumber) {
-    let userId = globalAccounts.getAccount(krisflyerNumber);
-    return sia20.balanceOf(userId, userId);
+  numTokens(userId) {
+    let userAddr = globalAccounts.getAccount(userId);
+    return espm20.balanceOf(userAddr, userAddr);
   }
 }
-SIAToken = Guac(SIAToken);
-let siatoken = new SIAToken();
+ESPMToken = Guac(ESPMToken);
+let espmtoken = new ESPMToken();
 
 
-export default siatoken;
+export default espmtoken;
 export {
-  SIA20,
-  SIA721,
-  SIAEscrow,
-  siatoken,
-  sianft,
+  ESPM20,
+  ESPM721,
+  ESPMEscrow,
+  espmtoken,
+  espmnft,
   globalAccounts
 };

@@ -19,7 +19,7 @@ class Footer extends React.Component {
   render() {
     return (
       <StickyFooter className={this.className()}>
-        Copyright © 2017-2018 Singapore Airlines. All rights reserved.
+        Copyright © 2018 Eric Hou. All rights reserved.
         Designed by&nbsp;<a href={'https://www.linkedin.com/in/erichouca/'}>Eric Hou</a>.
       </StickyFooter>
     );

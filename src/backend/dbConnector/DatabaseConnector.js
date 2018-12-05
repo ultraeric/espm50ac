@@ -1,8 +1,8 @@
-const assert = require('assert');
 const MongoClient = require('mongodb').MongoClient;
-const defaultUrl = 'INSERT MONGO CLIENT';
+const defaultUrl = 'mongodb://actest:actest0@ds263759.mlab.com:63759/espm';
 import {Guac} from 'guac-hoc/lib/Guac';
-import {Claims} from './Claims';
+import {Resources} from './Resources';
+import {Users} from './Users';
 
 class DatabaseConnector {
   constructor(url = defaultUrl) {
@@ -10,11 +10,11 @@ class DatabaseConnector {
     this.url = url;
     this.connect().then(
       (db) => {
-        db.collection('claims');
-        db.collection('flights');
+        db.collection('resources');
       }
     );
-    this.claims = new Claims(this);
+    this.resources = new Resources(this);
+    this.users = new Users(this);
   }
 
   /** Returns a Promise **/
